@@ -6,7 +6,7 @@
 /*   By: mkazuhik <mkazuhik@student.42tokyo.jp>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/11/22 04:54:23 by mkazuhik          #+#    #+#             */
-/*   Updated: 2025/11/22 05:28:23 by mkazuhik         ###   ########.fr       */
+/*   Updated: 2025/11/22 05:48:54 by mkazuhik         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -210,6 +210,7 @@ t_token	*word(char **rest, char *line);
 void	append_char(char **s, char c);
 void	quote_removal(t_token *tok);
 void	expand_and_remove_quotes(t_token *tok, t_env *env);
+char	*strjoin_free(char *s1, char *s2);
 int		expand_variable_name(char **result, char **p, t_env *env,
 			char *var_end);
 int		expand_special_variable(char **result, char **p, int *exit_status_ptr,

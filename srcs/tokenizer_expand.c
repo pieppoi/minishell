@@ -32,7 +32,7 @@ void	append_char(char **s, char c)
 	*s = new;
 }
 
-static char	*strjoin_free(char *s1, char *s2)
+char	*strjoin_free(char *s1, char *s2)
 {
 	char	*result;
 

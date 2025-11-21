@@ -6,13 +6,13 @@
 /*   By: mkazuhik <mkazuhik@student.42tokyo.jp>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/11/22 05:43:19 by mkazuhik          #+#    #+#             */
-/*   Updated: 2025/11/22 05:43:20 by mkazuhik         ###   ########.fr       */
+/*   Updated: 2025/11/22 05:48:54 by mkazuhik         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
 
-char	*join_path(const const char *dir, const char *cmd)
+char	*join_path(const char *dir, const char *cmd)
 {
 	char	*tmp;
 	char	*full;

@@ -6,7 +6,7 @@
 #    By: mkazuhik <mkazuhik@student.42tokyo.jp>     +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2025/11/22 04:54:28 by mkazuhik          #+#    #+#              #
-#    Updated: 2025/11/22 05:37:26 by mkazuhik         ###   ########.fr        #
+#    Updated: 2025/11/22 05:48:54 by mkazuhik         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -39,6 +39,7 @@ SRCS = $(SRCDIR)/main.c \
 	$(SRCDIR)/utils_expand.c \
 	$(SRCDIR)/utils_memory.c \
 	$(SRCDIR)/exec_path.c \
+	$(SRCDIR)/exec_path_utils.c \
 	$(SRCDIR)/exec_process.c \
 	$(SRCDIR)/redirect_file.c \
 	$(SRCDIR)/redirect_heredoc.c \
