@@ -6,7 +6,7 @@
 /*   By: mkazuhik <mkazuhik@student.42tokyo.jp>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/11/22 05:05:00 by mkazuhik          #+#    #+#             */
-/*   Updated: 2025/11/22 05:48:54 by mkazuhik         ###   ########.fr       */
+/*   Updated: 2025/11/22 23:05:25 by mkazuhik         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,47 +15,27 @@
 #define SINGLE_QUOTE_CHAR '\''
 #define DOUBLE_QUOTE_CHAR '\"'
 
-static char	*scan_single_quote(char *line)
-{
-	line++;
-	while (*line && *line != SINGLE_QUOTE_CHAR)
-		line++;
-	if (*line == '\0')
-	{
-		print_error("minishell", NULL, "unclosed single quote");
-		return (NULL);
-	}
-	return (line + 1);
-}
-
-static char	*scan_double_quote(char *line)
-{
-	line++;
-	while (*line && *line != DOUBLE_QUOTE_CHAR)
-		line++;
-	if (*line == '\0')
-	{
-		print_error("minishell", NULL, "unclosed double quote");
-		return (NULL);
-	}
-	return (line + 1);
-}
-
 static char	*scan_word_end(char *line)
 {
 	while (*line && !is_metacharacter(*line))
 	{
 		if (*line == SINGLE_QUOTE_CHAR)
 		{
-			line = scan_single_quote(line);
-			if (line == NULL)
-				return (NULL);
+			line++;
+			while (*line && *line != SINGLE_QUOTE_CHAR)
+				line++;
+			if (*line == '\0')
+				fatal_error("Unclosed single quote");
+			line++;
 		}
 		else if (*line == DOUBLE_QUOTE_CHAR)
 		{
-			line = scan_double_quote(line);
-			if (line == NULL)
-				return (NULL);
+			line++;
+			while (*line && *line != DOUBLE_QUOTE_CHAR)
+				line++;
+			if (*line == '\0')
+				fatal_error("Unclosed double quote");
+			line++;
 		}
 		else
 			line++;
@@ -70,8 +50,6 @@ t_token	*word(char **rest, char *line)
 	char		*word_str;
 
 	end = scan_word_end(line);
-	if (end == NULL)
-		return (NULL);
 	word_str = strndup(start, end - start);
 	if (word_str == NULL)
 		fatal_error("strndup");

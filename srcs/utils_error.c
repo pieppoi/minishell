@@ -15,8 +15,11 @@
 void	print_error(char *cmd, char *arg, char *error)
 {
 	ft_putstr_fd("minishell: ", STDERR_FILENO);
-	ft_putstr_fd(cmd, STDERR_FILENO);
-	ft_putstr_fd(": ", STDERR_FILENO);
+	if (cmd)
+	{
+		ft_putstr_fd(cmd, STDERR_FILENO);
+		ft_putstr_fd(": ", STDERR_FILENO);
+	}
 	if (arg)
 	{
 		ft_putstr_fd(arg, STDERR_FILENO);

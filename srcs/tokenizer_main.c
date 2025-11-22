@@ -6,7 +6,7 @@
 /*   By: mkazuhik <mkazuhik@student.42tokyo.jp>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/11/22 05:05:00 by mkazuhik          #+#    #+#             */
-/*   Updated: 2025/11/22 05:05:00 by mkazuhik         ###   ########.fr       */
+/*   Updated: 2025/11/23 04:09:15 by mkazuhik         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -25,11 +25,7 @@ static t_token	*tokenize_dispatcher(t_token *current_tail,
 	else if (is_operator(line))
 		new_tok = operator(line_ptr, line);
 	else if (is_word(line))
-	{
 		new_tok = word(line_ptr, line);
-		if (new_tok == NULL)
-			return (NULL);
-	}
 	else
 	{
 		assert_error("Unexpected Token");
@@ -50,13 +46,8 @@ t_token	*tokenize(char *line)
 	while (*line)
 	{
 		new_tail = tokenize_dispatcher(tok, &line, line);
-		if (new_tail == NULL)
-		{
-			if (!is_blank(*line))
-				return (NULL);
-			continue ;
-		}
-		tok = new_tail;
+		if (new_tail != NULL)
+			tok = new_tail;
 	}
 	tok->next = new_token(NULL, TK_EOF);
 	return (head.next);

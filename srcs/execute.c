@@ -6,7 +6,7 @@
 /*   By: mkazuhik <mkazuhik@student.42tokyo.jp>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/11/22 05:05:00 by mkazuhik          #+#    #+#             */
-/*   Updated: 2025/11/22 05:22:52 by mkazuhik         ###   ########.fr       */
+/*   Updated: 2025/11/23 04:09:15 by mkazuhik         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -20,7 +20,7 @@ static int	process_tokenization(char *input, t_env *env, char ***tokens_ptr)
 	tok = tokenize(input);
 	if (!tok)
 	{
-		print_error("minishell", NULL, "syntax error");
+		print_error(NULL, NULL, "syntax error");
 		return (-1);
 	}
 	expand_and_remove_quotes(tok, env);
