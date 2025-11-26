@@ -24,13 +24,13 @@ int	handle_heredoc_redirection(char **tokens,
 		if (!tokens[i + 1] || i + 1 >= range.end_idx)
 		{
 			print_error("syntax error", NULL, "unexpected end of file");
-			return (1);
+			return (-1);
 		}
 		if (*in_fd >= 0)
 			close(*in_fd);
 		fd = handle_heredoc(tokens[i + 1]);
 		if (fd < 0)
-			return (1);
+			return (-1);
 		*in_fd = fd;
 		*current_idx_ptr += 2;
 		return (1);
@@ -50,13 +50,13 @@ int	handle_file_input_redirection(char **tokens,
 		if (!tokens[i + 1] || i + 1 >= range.end_idx)
 		{
 			print_error("syntax error", NULL, "unexpected end of file");
-			return (1);
+			return (-1);
 		}
 		if (*in_fd >= 0)
 			close(*in_fd);
 		fd = open_input_file(tokens[i + 1]);
 		if (fd < 0)
-			return (1);
+			return (-1);
 		*in_fd = fd;
 		*current_idx_ptr += 2;
 		return (1);
@@ -90,14 +90,14 @@ int	handle_output_redirections(char **tokens,
 		if (!tokens[i + 1] || i + 1 >= range.end_idx)
 		{
 			print_error("syntax error", NULL, "unexpected end of file");
-			return (1);
+			return (-1);
 		}
 		if (*out_fd >= 0)
 			close(*out_fd);
 		append_mode = (ft_strncmp(tokens[i], ">>", 3) == 0);
 		fd = open_output_file(tokens[i + 1], append_mode);
 		if (fd < 0)
-			return (1);
+			return (-1);
 		*out_fd = fd;
 		*current_idx_ptr += 2;
 		return (1);
@@ -109,6 +109,7 @@ int	setup_pipe_redirections(char **tokens,
 		t_token_range range, int *in_fd, int *out_fd)
 {
 	int	i;
+	int	ret;
 
 	if (!tokens || !in_fd || !out_fd)
 		return (1);
@@ -117,20 +118,17 @@ int	setup_pipe_redirections(char **tokens,
 	i = range.start_idx;
 	while (i < range.end_idx && tokens[i])
 	{
-		if (handle_input_redirections(tokens, range, in_fd, &i))
-		{
-			if (*in_fd < 0)
-				return (1);
+		ret = handle_input_redirections(tokens, range, in_fd, &i);
+		if (ret == -1)
+			return (1);
+		if (ret == 1)
 			continue ;
-		}
-		else if (handle_output_redirections(tokens, range, out_fd, &i))
-		{
-			if (*out_fd < 0)
-				return (1);
+		ret = handle_output_redirections(tokens, range, out_fd, &i);
+		if (ret == -1)
+			return (1);
+		if (ret == 1)
 			continue ;
-		}
-		else
-			i++;
+		i++;
 	}
 	return (0);
 }
