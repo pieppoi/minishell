@@ -6,7 +6,7 @@
 /*   By: mkazuhik <mkazuhik@student.42tokyo.jp>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/11/22 04:54:10 by mkazuhik          #+#    #+#             */
-/*   Updated: 2025/11/27 05:56:54 by mkazuhik         ###   ########.fr       */
+/*   Updated: 2025/11/27 06:00:35 by mkazuhik         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -41,8 +41,8 @@ void	sigint_handler(int sig)
 {
 	(void)sig;
 	g_signal = 130;
-	rl_on_new_line();
 	ft_putstr_fd("^C\n", STDOUT_FILENO);
+	rl_on_new_line();
 	rl_replace_line("", 0);
 	rl_redisplay();
 }
