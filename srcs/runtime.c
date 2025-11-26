@@ -16,7 +16,7 @@
 static struct termios	g_original_termios;
 static struct termios	g_interactive_termios;
 static struct termios	g_execution_termios;
-static bool	g_termios_saved;
+static bool				g_termios_saved;
 
 static void	initialize_termios_modes(void)
 {

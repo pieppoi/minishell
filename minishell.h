@@ -248,7 +248,7 @@ int		handle_input_redirections(char **tokens,
 			t_token_range range, int *in_fd, int *current_idx_ptr);
 int		handle_output_redirections(char **tokens,
 			t_token_range range, int *out_fd, int *current_idx_ptr);
-t_pipe_redir_status	setup_pipe_redirections(char **tokens,
+t_pipe_redir_status			setup_pipe_redirections(char **tokens,
 			t_token_range range, int *in_fd, int *out_fd);
 void	find_pipe_segment(char **tokens,
 			int *start_idx_ptr, t_token_range *range_ptr, int *has_next_ptr);

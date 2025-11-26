@@ -12,6 +12,13 @@
 
 #include "minishell.h"
 
+struct s_pipe_exec_state
+{
+	pid_t	last_pid;
+	int		start_idx;
+	int		exit_code;
+};
+
 static void	restore_parent_state(void)
 {
 	set_parent_interactive_signals();
@@ -29,28 +36,26 @@ static void	wait_for_remaining_children(void)
 int	execute_pipe(char **tokens, t_env **env)
 {
 	t_fd_info	fdi;
-	pid_t	last_pid;
-	int	start_idx;
-	int	exit_code;
+	struct s_pipe_exec_state	state;
 
 	set_execution_terminal_mode();
 	set_parent_execution_signals();
 	fdi.prev_pipe_read = -1;
 	fdi.status = 0;
-	start_idx = 0;
+	state.start_idx = 0;
 	while (1)
 	{
-		last_pid = pipe_loop_segment(tokens, env, &fdi, &start_idx);
-		if (last_pid <= 0 || fdi.prev_pipe_read == -1)
+		state.last_pid = pipe_loop_segment(tokens, env, &fdi, &state.start_idx);
+		if (state.last_pid <= 0 || fdi.prev_pipe_read == -1)
 			break ;
 	}
 	wait_for_remaining_children();
-	if (last_pid <= 0)
+	if (state.last_pid <= 0)
 	{
 		restore_parent_state();
 		return (1);
 	}
-	exit_code = interpret_wait_status(fdi.status, 1);
+	state.exit_code = interpret_wait_status(fdi.status, 1);
 	restore_parent_state();
-	return (exit_code);
+	return (state.exit_code);
 }
