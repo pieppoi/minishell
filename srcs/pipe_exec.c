@@ -71,7 +71,31 @@ pid_t	pipe_loop_segment(char **tokens,
 	find_pipe_segment(tokens, start_idx_ptr, &range, &has_next);
 	if (setup_pipe_if_needed(fdi_ptr, has_next) != 0)
 		return (-1);
-	setup_pipe_redirections(tokens, range, &fdi_ptr->in_fd, &fdi_ptr->out_fd);
+	if (setup_pipe_redirections(tokens, range,
+			&fdi_ptr->in_fd, &fdi_ptr->out_fd) != 0)
+	{
+		if (fdi_ptr->in_fd >= 0)
+		{
+			close(fdi_ptr->in_fd);
+			fdi_ptr->in_fd = -1;
+		}
+		if (fdi_ptr->out_fd >= 0)
+		{
+			close(fdi_ptr->out_fd);
+			fdi_ptr->out_fd = -1;
+		}
+		if (has_next)
+		{
+			close(fdi_ptr->pipe_fd[0]);
+			close(fdi_ptr->pipe_fd[1]);
+		}
+		if (fdi_ptr->prev_pipe_read >= 0)
+		{
+			close(fdi_ptr->prev_pipe_read);
+			fdi_ptr->prev_pipe_read = -1;
+		}
+		return (-1);
+	}
 	args = get_pipe_command(tokens, start_idx_ptr);
 	if (!args || !args[0])
 	{
