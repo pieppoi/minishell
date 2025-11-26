@@ -35,16 +35,44 @@ int	main(int argc, char **argv, char **envp)
 	return (g_signal);
 }
 
+// TTYでない場合の1行入力
+static char	*read_noninteractive_line(void)
+{
+	char	*line;
+	char	ch;
+	ssize_t	bytes;
+
+	line = NULL;
+	while (1)
+	{
+		bytes = read(STDIN_FILENO, &ch, 1);
+		if (bytes == -1)
+		{
+			if (errno == EINTR)
+				continue ;
+			print_system_error("read", NULL);
+			free(line);
+			return (NULL);
+		}
+		if (bytes == 0)
+			break ;
+		if (ch == '\n')
+		{
+			if (!line)
+				return (ft_strdup(""));
+			return (line);
+		}
+		append_char(&line, ch);
+	}
+	return (line);
+}
+
 // readlineで入力を取得
 static char	*get_input_line(char *prompt)
 {
 	if (isatty(STDIN_FILENO))
 		return (readline(prompt));
-	else
-	{
-		rl_outstream = stderr;
-		return (readline(""));
-	}
+	return (read_noninteractive_line());
 }
 
 // メインループ
