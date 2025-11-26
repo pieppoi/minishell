@@ -148,6 +148,7 @@ int	execute_pipe(char **tokens, t_env **env)
 	pid_t			last_pid;
 	int				exit_code;
 
+	set_execution_terminal_mode();
 	set_parent_execution_signals();
 	fdi.prev_pipe_read = -1;
 	fdi.status = 0;
@@ -165,9 +166,11 @@ int	execute_pipe(char **tokens, t_env **env)
 	if (last_pid <= 0)
 	{
 		set_parent_interactive_signals();
+		set_interactive_terminal_mode();
 		return (1);
 	}
 	exit_code = interpret_wait_status(fdi.status, 1);
 	set_parent_interactive_signals();
+	set_interactive_terminal_mode();
 	return (exit_code);
 }
