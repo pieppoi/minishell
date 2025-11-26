@@ -48,10 +48,8 @@ static char	*read_noninteractive_line(void)
 		bytes = read(STDIN_FILENO, &ch, 1);
 		if (bytes == -1)
 		{
-			if (errno == EINTR)
+			if (handle_read_failure(&line))
 				continue ;
-			print_system_error("read", NULL);
-			free(line);
 			return (NULL);
 		}
 		if (bytes == 0)

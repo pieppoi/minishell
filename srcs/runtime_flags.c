@@ -13,12 +13,14 @@
 #include "minishell.h"
 
 #ifdef IUTF8
+
 void	apply_utf8_flags(struct termios *interactive, struct termios *execution)
 {
 	interactive->c_iflag |= IUTF8;
 	execution->c_iflag |= IUTF8;
 }
 #else
+
 void	apply_utf8_flags(struct termios *interactive, struct termios *execution)
 {
 	(void)interactive;
@@ -27,6 +29,7 @@ void	apply_utf8_flags(struct termios *interactive, struct termios *execution)
 #endif
 
 #ifdef ECHOCTL
+
 void	apply_echoctl_flags(struct termios *interactive,
 		struct termios *execution)
 {
@@ -34,6 +37,7 @@ void	apply_echoctl_flags(struct termios *interactive,
 	execution->c_lflag |= ECHOCTL;
 }
 #else
+
 void	apply_echoctl_flags(struct termios *interactive,
 		struct termios *execution)
 {

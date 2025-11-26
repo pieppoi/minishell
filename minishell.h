@@ -175,6 +175,10 @@ void	release_shell_resources(t_env **env);
 void	shutdown_shell(t_env **env, int exit_code);
 void	set_interactive_terminal_mode(void);
 void	set_execution_terminal_mode(void);
+void	apply_utf8_flags(struct termios *interactive,
+			struct termios *execution);
+void	apply_echoctl_flags(struct termios *interactive,
+			struct termios *execution);
 
 // プロセス終了ステータス処理
 int		interpret_wait_status(int status, int print_signal_msg);
