@@ -78,7 +78,11 @@ int	handle_redirection_and_execution(char **tokens,
 	if (is_builtin(args[0]))
 		exit_status = execute_builtin(args, env);
 	else
+	{
+		set_parent_execution_signals();
 		exit_status = execute_external(args, env);
+		set_parent_interactive_signals();
+	}
 	return (exit_status);
 }
 

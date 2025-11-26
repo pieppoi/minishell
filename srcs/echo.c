@@ -12,26 +12,29 @@
 
 #include "minishell.h"
 
-// 新しい関数 1: -n オプションの処理と開始インデックスの調整 (引数3個)
-// 成功時は1を返し、オプション処理を i と newline に反映
-static int	handle_echo_options(char **args, int *i, int *newline)
+static int	is_n_option(char *arg)
 {
-	if (!args || !args[1])
+	int	i;
+
+	if (!arg || arg[0] != '-')
 		return (0);
-	if (ft_strncmp(args[1], "-n", 3) == 0)
+	i = 1;
+	if (arg[i] == '\0')
+		return (0);
+	while (arg[i])
 	{
-		*newline = 0;
-		*i = 2;
-		return (1);
+		if (arg[i] != 'n')
+			return (0);
+		i++;
 	}
-	*i = 1;
-	return (0);
+	return (1);
 }
 
-// 新しい関数 2: 引数を出力し、スペースを挿入する (引数4個)
-// 成功時は0を返す
-static int	print_echo_args(char **args, int i, int newline)
+static void	print_echo_args(char **args, int start_idx, int newline)
 {
+	int	i;
+
+	i = start_idx;
 	while (args[i])
 	{
 		ft_putstr_fd(args[i], STDOUT_FILENO);
@@ -41,22 +44,29 @@ static int	print_echo_args(char **args, int i, int newline)
 	}
 	if (newline)
 		ft_putchar_fd('\n', STDOUT_FILENO);
-	return (0);
 }
 
-// メイン関数 (引数2個: args, env)
 int	ft_echo(char **args, t_env **env)
 {
 	int	i;
 	int	newline;
 
 	(void)env;
-	if (!args || !args[1])
+	if (!args || !args[0])
+		return (1);
+	i = 1;
+	newline = 1;
+	while (args[i] && is_n_option(args[i]))
 	{
-		ft_putchar_fd('\n', STDOUT_FILENO);
+		newline = 0;
+		i++;
+	}
+	if (!args[i])
+	{
+		if (newline)
+			ft_putchar_fd('\n', STDOUT_FILENO);
 		return (0);
 	}
-	newline = 1;
-	handle_echo_options(args, &i, &newline);
-	return (print_echo_args(args, i, newline));
+	print_echo_args(args, i, newline);
+	return (0);
 }

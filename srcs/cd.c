@@ -78,6 +78,11 @@ int	ft_cd(char **args, t_env **env)
 
 	if (!env || !*env)
 		return (1);
+	if (args && args[2])
+	{
+		print_error("cd", NULL, "too many arguments");
+		return (1);
+	}
 	path = get_cd_path(args, *env);
 	if (!path)
 		return (1);

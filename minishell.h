@@ -155,6 +155,8 @@ void	restore_fds(int saved_stdin, int saved_stdout);
 
 // シグナル処理
 void	setup_signal_handlers(void);
+void	set_parent_interactive_signals(void);
+void	set_parent_execution_signals(void);
 void	sigint_handler(int sig);
 void	child_signal_setting(void);
 
@@ -163,6 +165,9 @@ void	configure_input_behavior(void);
 void	restore_terminal_behavior(void);
 void	release_shell_resources(t_env **env);
 void	shutdown_shell(t_env **env, int exit_code);
+
+// プロセス終了ステータス処理
+int		interpret_wait_status(int status, int print_signal_msg);
 
 /*-----------------------------------------------------------
 ** Tokenizer function prototypes

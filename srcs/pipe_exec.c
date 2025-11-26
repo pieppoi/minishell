@@ -91,22 +91,28 @@ int	execute_pipe(char **tokens, t_env **env)
 	int				status;
 	int				start_idx;
 	pid_t			last_pid;
+	int				exit_code;
 
+	set_parent_execution_signals();
 	fdi.prev_pipe_read = -1;
+	fdi.status = 0;
 	start_idx = 0;
 	while (1)
 	{
 		last_pid = pipe_loop_segment(tokens, env, &fdi, &start_idx);
-		if (last_pid == 0)
+		if (last_pid <= 0)
 			break ;
-		if (last_pid == -1)
-			return (1);
 		if (fdi.prev_pipe_read == -1)
 			break ;
 	}
 	while (waitpid(-1, &status, 0) > 0)
 		;
-	if (WIFEXITED(fdi.status))
-		return (WEXITSTATUS(fdi.status));
-	return (1);
+	if (last_pid <= 0)
+	{
+		set_parent_interactive_signals();
+		return (1);
+	}
+	exit_code = interpret_wait_status(fdi.status, 1);
+	set_parent_interactive_signals();
+	return (exit_code);
 }

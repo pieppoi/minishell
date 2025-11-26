@@ -15,11 +15,23 @@
 // グローバル変数（シグナル用）
 int	g_signal = 0;
 
-// シグナルハンドラーを設定（親プロセス用）
-void	setup_signal_handlers(void)
+// 親プロセスのシグナルハンドラー設定
+void	set_parent_interactive_signals(void)
 {
 	signal(SIGINT, sigint_handler);
 	signal(SIGQUIT, SIG_IGN);
+}
+
+void	set_parent_execution_signals(void)
+{
+	signal(SIGINT, SIG_IGN);
+	signal(SIGQUIT, SIG_IGN);
+}
+
+// シグナルハンドラーを設定（親プロセス初期化用）
+void	setup_signal_handlers(void)
+{
+	set_parent_interactive_signals();
 }
 
 // SIGINT ハンドラー (Ctrl+C)
@@ -27,7 +39,7 @@ void	sigint_handler(int sig)
 {
 	(void)sig;
 	g_signal = 130;
-	ft_putstr_fd("^C\n", STDOUT_FILENO);
+	ft_putchar_fd('\n', STDOUT_FILENO);
 	rl_replace_line("", 0);
 	rl_on_new_line();
 	rl_redisplay();

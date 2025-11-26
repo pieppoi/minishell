@@ -56,7 +56,6 @@ int	minishell_loop(t_env **env)
 	prompt = "minishell$ ";
 	while (true)
 	{
-		g_signal = 0;
 		input = get_input_line(prompt);
 		if (!input)
 		{
