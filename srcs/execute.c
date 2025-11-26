@@ -93,7 +93,7 @@ void	cleanup_and_exit_single(char **tokens,
 {
 	restore_fds(saved_stdin, saved_stdout);
 	free_array(tokens);
-	free(args);
+	free_array(args);
 }
 
 int	execute_single_command(char **tokens,
@@ -105,7 +105,7 @@ int	execute_single_command(char **tokens,
 	if (exit_status == -1)
 	{
 		free_array(tokens);
-		free(args);
+		free_array(args);
 		if (g_signal != 130)
 			g_signal = 1;
 		return (-1);
