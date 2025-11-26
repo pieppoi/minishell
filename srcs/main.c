@@ -88,6 +88,7 @@ int	minishell_loop(t_env **env)
 {
 	char	*input;
 	char	*prompt;
+	int		exec_status;
 
 	prompt = "minishell$ ";
 	while (true)
@@ -101,31 +102,43 @@ int	minishell_loop(t_env **env)
 		}
 		if (ft_strlen(input) > 0)
 			add_history(input);
-		parse_and_execute(input, env);
+		exec_status = parse_and_execute(input, env);
+		if (exec_status == SHELL_EXIT_REQUEST)
+		{
+			int	exit_code;
+
+			exit_code = g_signal;
+			free(input);
+			shutdown_shell(env, exit_code);
+		}
 		free(input);
 	}
 	return (0);
 }
 
-void	parse_and_execute(char *input, t_env **env)
+int	parse_and_execute(char *input, t_env **env)
 {
 	char	**tokens;
 	char	**args;
 	t_fds	fds;
 	int		ret;
+	int		exec_status;
 
 	tokens = NULL;
 	args = NULL;
 	if (!input || ft_strlen(input) == 0)
-		return ;
+		return (0);
 	ret = handle_tokenization_and_args(input, env, &tokens, &args);
 	if (ret == -1)
-		return ;
+		return (0);
 	if (ret == 1)
 	{
 		g_signal = execute_pipe(tokens, env);
 		free_array(tokens);
-		return ;
+		return (0);
 	}
-	execute_single_command(tokens, args, env, &fds);
+	exec_status = execute_single_command(tokens, args, env, &fds);
+	if (exec_status == SHELL_EXIT_REQUEST)
+		return (SHELL_EXIT_REQUEST);
+	return (0);
 }

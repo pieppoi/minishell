@@ -96,7 +96,7 @@ void	cleanup_and_exit_single(char **tokens,
 	free(args);
 }
 
-void	execute_single_command(char **tokens,
+int	execute_single_command(char **tokens,
 		char **args, t_env **env, t_fds *fds_ptr)
 {
 	int	exit_status;
@@ -108,18 +108,16 @@ void	execute_single_command(char **tokens,
 		free(args);
 		if (g_signal != 130)
 			g_signal = 1;
-		return ;
+		return (-1);
 	}
 	if (exit_status == SHELL_EXIT_REQUEST)
 	{
-		int	exit_code;
-
-		exit_code = g_signal;
 		cleanup_and_exit_single(tokens, args,
 			fds_ptr->saved_stdin, fds_ptr->saved_stdout);
-		shutdown_shell(env, exit_code);
+		return (SHELL_EXIT_REQUEST);
 	}
 	cleanup_and_exit_single(tokens, args,
 		fds_ptr->saved_stdin, fds_ptr->saved_stdout);
 	g_signal = exit_status;
+	return (exit_status);
 }
