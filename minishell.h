@@ -115,7 +115,7 @@ typedef struct s_env_pair
 
 // メイン関数
 int		minishell_loop(t_env **env);
-void	parse_and_execute(char *input, t_env **env);
+int		parse_and_execute(char *input, t_env **env);
 int		is_builtin(char *cmd);
 int		execute_builtin(char **args, t_env **env);
 
@@ -259,7 +259,7 @@ int		handle_redirection_and_execution(char **tokens,
 			char **args, t_env **env, t_fds *fd_ptr);
 void	cleanup_and_exit_single(char **tokens,
 			char **args, int saved_stdin, int saved_stdout);
-void	execute_single_command(char **tokens,
+int		execute_single_command(char **tokens,
 			char **args, t_env **env, t_fds *fds_ptr);
 
 #endif
