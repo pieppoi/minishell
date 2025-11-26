@@ -1,19 +1,27 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   runtime.c                                          :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: mkazuhik <mkazuhik@student.42tokyo.jp>     +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2025/11/22 04:54:10 by mkazuhik          #+#    #+#             */
+/*   Updated: 2025/11/27 08:00:00 by mkazuhik         ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
 #include "minishell.h"
 #include <locale.h>
+
+void	apply_utf8_flags(struct termios *interactive,
+			struct termios *execution);
+void	apply_echoctl_flags(struct termios *interactive,
+			struct termios *execution);
 
 static struct termios	g_original_termios;
 static struct termios	g_interactive_termios;
 static struct termios	g_execution_termios;
-static bool				g_termios_saved;
-
-static void	apply_termios(const struct termios *term)
-{
-	if (!term || !g_termios_saved)
-		return ;
-	if (!isatty(STDIN_FILENO))
-		return ;
-	tcsetattr(STDIN_FILENO, TCSANOW, term);
-}
+static bool			g_termios_saved;
 
 static void	initialize_termios_modes(void)
 {
@@ -27,25 +35,23 @@ static void	initialize_termios_modes(void)
 	g_interactive_termios = current;
 	g_execution_termios = current;
 	g_termios_saved = true;
-#ifdef IUTF8
-	g_interactive_termios.c_iflag |= IUTF8;
-	g_execution_termios.c_iflag |= IUTF8;
-#endif
-#ifdef ECHOCTL
-	g_interactive_termios.c_lflag &= ~ECHOCTL;
-	g_execution_termios.c_lflag |= ECHOCTL;
-#endif
-	apply_termios(&g_interactive_termios);
+	apply_utf8_flags(&g_interactive_termios, &g_execution_termios);
+	apply_echoctl_flags(&g_interactive_termios, &g_execution_termios);
+	tcsetattr(STDIN_FILENO, TCSANOW, &g_interactive_termios);
 }
 
 void	set_interactive_terminal_mode(void)
 {
-	apply_termios(&g_interactive_termios);
+	if (!g_termios_saved || !isatty(STDIN_FILENO))
+		return ;
+	tcsetattr(STDIN_FILENO, TCSANOW, &g_interactive_termios);
 }
 
 void	set_execution_terminal_mode(void)
 {
-	apply_termios(&g_execution_termios);
+	if (!g_termios_saved || !isatty(STDIN_FILENO))
+		return ;
+	tcsetattr(STDIN_FILENO, TCSANOW, &g_execution_termios);
 }
 
 void	configure_input_behavior(void)
@@ -61,23 +67,7 @@ void	configure_input_behavior(void)
 
 void	restore_terminal_behavior(void)
 {
-	if (g_termios_saved && isatty(STDIN_FILENO))
-		tcsetattr(STDIN_FILENO, TCSANOW, &g_original_termios);
-}
-
-void	release_shell_resources(t_env **env)
-{
-	if (env && *env)
-	{
-		free_env_list(*env);
-		*env = NULL;
-	}
-	rl_clear_history();
-	restore_terminal_behavior();
-}
-
-void	shutdown_shell(t_env **env, int exit_code)
-{
-	release_shell_resources(env);
-	exit(exit_code);
+	if (!g_termios_saved || !isatty(STDIN_FILENO))
+		return ;
+	tcsetattr(STDIN_FILENO, TCSANOW, &g_original_termios);
 }

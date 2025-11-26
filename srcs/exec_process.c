@@ -12,13 +12,6 @@
 
 #include "minishell.h"
 
-static int	map_exec_error_to_status(int errnum)
-{
-	if (errnum == ENOENT)
-		return (127);
-	return (126);
-}
-
 static void	execute_child_process(char *exec_path, char **argv, t_env **env)
 {
 	char	**envp;
@@ -31,16 +24,11 @@ static void	execute_child_process(char *exec_path, char **argv, t_env **env)
 	execve(exec_path, argv, envp);
 	print_system_error(argv[0], NULL);
 	free_array(envp);
-	exit_code = map_exec_error_to_status(errno);
+	if (errno == ENOENT)
+		exit_code = 127;
+	else
+		exit_code = 126;
 	_exit(exit_code);
-}
-
-static void	print_signal_message(int sig)
-{
-	if (sig == SIGINT)
-		ft_putchar_fd('\n', STDOUT_FILENO);
-	else if (sig == SIGQUIT)
-		ft_putendl_fd("Quit: 3", STDERR_FILENO);
 }
 
 int	interpret_wait_status(int status, int print_signal_msg)
@@ -50,7 +38,12 @@ int	interpret_wait_status(int status, int print_signal_msg)
 	if (WIFSIGNALED(status))
 	{
 		if (print_signal_msg)
-			print_signal_message(WTERMSIG(status));
+		{
+			if (WTERMSIG(status) == SIGINT)
+				ft_putchar_fd('\n', STDOUT_FILENO);
+			else if (WTERMSIG(status) == SIGQUIT)
+				ft_putendl_fd("Quit: 3", STDERR_FILENO);
+		}
 		return (128 + WTERMSIG(status));
 	}
 	return (1);

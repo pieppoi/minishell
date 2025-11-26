@@ -57,13 +57,13 @@ static void	setup_output_redirection(t_fd_info fd_info, int has_next)
 void	execute_child_process_pipe(char **args,
 		t_env **env, t_fd_info fd_info, int has_next)
 {
+	int	status;
+
 	child_signal_setting();
 	setup_input_redirection(fd_info);
 	setup_output_redirection(fd_info, has_next);
 	if (is_builtin(args[0]))
 	{
-		int	status;
-
 		status = execute_builtin(args, env);
 		if (status == SHELL_EXIT_REQUEST)
 			exit(g_signal);

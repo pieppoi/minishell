@@ -36,30 +36,27 @@ static int	skip_quoted(char **line_ptr, char quote_char)
 	return (0);
 }
 
+static int	handle_quoted_segment(char **line_ptr, char quote_char,
+		bool *error_ptr)
+{
+	if (skip_quoted(line_ptr, quote_char) != 0)
+	{
+		if (error_ptr)
+			*error_ptr = true;
+		report_unclosed_quote(quote_char == SINGLE_QUOTE_CHAR);
+		return (-1);
+	}
+	return (0);
+}
+
 static char	*scan_word_end(char *line, bool *error_ptr)
 {
 	while (*line && !is_metacharacter(*line))
 	{
-		if (*line == SINGLE_QUOTE_CHAR)
+		if (*line == SINGLE_QUOTE_CHAR || *line == DOUBLE_QUOTE_CHAR)
 		{
-			if (skip_quoted(&line, SINGLE_QUOTE_CHAR) != 0)
-			{
-				if (error_ptr)
-					*error_ptr = true;
-				report_unclosed_quote(true);
+			if (handle_quoted_segment(&line, *line, error_ptr) != 0)
 				return (NULL);
-			}
-			continue ;
-		}
-		if (*line == DOUBLE_QUOTE_CHAR)
-		{
-			if (skip_quoted(&line, DOUBLE_QUOTE_CHAR) != 0)
-			{
-				if (error_ptr)
-					*error_ptr = true;
-				report_unclosed_quote(false);
-				return (NULL);
-			}
 			continue ;
 		}
 		line++;
