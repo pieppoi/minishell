@@ -13,7 +13,7 @@
 #include "minishell.h"
 
 static t_token	*tokenize_dispatcher(t_token *current_tail,
-		char **line_ptr, char *line)
+		char **line_ptr, char *line, bool *error_ptr)
 {
 	t_token	*new_tok;
 
@@ -25,12 +25,14 @@ static t_token	*tokenize_dispatcher(t_token *current_tail,
 	else if (is_operator(line))
 		new_tok = operator(line_ptr, line);
 	else if (is_word(line))
-		new_tok = word(line_ptr, line);
+		new_tok = word(line_ptr, line, error_ptr);
 	else
 	{
 		assert_error("Unexpected Token");
 		return (NULL);
 	}
+	if (error_ptr && *error_ptr)
+		return (NULL);
 	current_tail->next = new_tok;
 	return (new_tok);
 }
@@ -40,12 +42,20 @@ t_token	*tokenize(char *line)
 	t_token	head;
 	t_token	*tok;
 	t_token	*new_tail;
+	bool	error;
 
 	head.next = NULL;
 	tok = &head;
+	error = false;
 	while (*line)
 	{
-		new_tail = tokenize_dispatcher(tok, &line, line);
+		new_tail = tokenize_dispatcher(tok, &line, line, &error);
+		if (error)
+		{
+			free_token(head.next);
+			errno = EINVAL;
+			return (NULL);
+		}
 		if (new_tail != NULL)
 			tok = new_tail;
 	}

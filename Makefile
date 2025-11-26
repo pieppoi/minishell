@@ -31,6 +31,7 @@ SRCS = $(SRCDIR)/main.c \
 	$(SRCDIR)/export_list.c \
 	$(SRCDIR)/unset.c \
 	$(SRCDIR)/signals.c \
+	$(SRCDIR)/runtime.c \
 	$(SRCDIR)/tokenizer.c \
 	$(SRCDIR)/env_init.c \
 	$(SRCDIR)/env_ops.c \

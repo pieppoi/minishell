@@ -19,17 +19,20 @@ int	main(int argc, char **argv, char **envp)
 
 	(void)argc;
 	(void)argv;
+	env = NULL;
+	configure_input_behavior();
 	setup_signal_handlers();
 	env = init_env(envp);
 	if (!env)
 	{
 		ft_putendl_fd("minishell: failed to initialize environment",
 			STDERR_FILENO);
+		release_shell_resources(&env);
 		return (1);
 	}
 	minishell_loop(&env);
-	free_env_list(env);
-	return (0);
+	release_shell_resources(&env);
+	return (g_signal);
 }
 
 // readlineで入力を取得
