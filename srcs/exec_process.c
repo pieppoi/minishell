@@ -28,7 +28,7 @@ static void	execute_child_process(char *exec_path, char **argv, t_env **env)
 static void	print_signal_message(int sig)
 {
 	if (sig == SIGINT)
-		ft_putchar_fd("\n", STDOUT_FILENO);
+		ft_putchar_fd('\n', STDOUT_FILENO);
 	else if (sig == SIGQUIT)
 		ft_putendl_fd("Quit: 3", STDERR_FILENO);
 }
