@@ -104,7 +104,8 @@ void	execute_single_command(char **tokens,
 	{
 		free_array(tokens);
 		free(args);
-		g_signal = 1;
+		if (g_signal != 130)
+			g_signal = 1;
 		return ;
 	}
 	if (exit_status == SHELL_EXIT_REQUEST)

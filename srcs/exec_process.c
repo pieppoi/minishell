@@ -12,17 +12,27 @@
 
 #include "minishell.h"
 
+static int	map_exec_error_to_status(int errnum)
+{
+	if (errnum == ENOENT)
+		return (127);
+	return (126);
+}
+
 static void	execute_child_process(char *exec_path, char **argv, t_env **env)
 {
 	char	**envp;
+	int		exit_code;
 
 	child_signal_setting();
 	envp = env_to_array(*env);
 	if (!envp)
 		_exit(1);
 	execve(exec_path, argv, envp);
-	perror("minishell");
-	_exit(126);
+	print_system_error(argv[0], NULL);
+	free_array(envp);
+	exit_code = map_exec_error_to_status(errno);
+	_exit(exit_code);
 }
 
 static void	print_signal_message(int sig)

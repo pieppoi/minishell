@@ -40,8 +40,8 @@ void	sigint_handler(int sig)
 	(void)sig;
 	g_signal = 130;
 	ft_putchar_fd('\n', STDOUT_FILENO);
-	rl_replace_line("", 0);
 	rl_on_new_line();
+	rl_replace_line("", 0);
 	rl_redisplay();
 }
 

@@ -12,30 +12,28 @@
 
 #include "minishell.h"
 
-static int	heredoc_setup(int *pipe_fd_ptr)
+static void	print_heredoc_warning(char *delimiter)
 {
-	if (pipe(pipe_fd_ptr) < 0)
-	{
-		print_error("pipe", NULL, strerror(errno));
-		return (-1);
-	}
-	return (0);
+	ft_putendl_fd("", STDOUT_FILENO);
+	ft_putstr_fd("minishell: warning: here-document delimited by end-of-file",
+		STDERR_FILENO);
+	ft_putstr_fd(" (wanted '", STDERR_FILENO);
+	ft_putstr_fd(delimiter, STDERR_FILENO);
+	ft_putendl_fd("')", STDERR_FILENO);
 }
 
-static int	heredoc_input_loop(char *delimiter, int write_fd)
+static void	run_heredoc_child(char *delimiter, int write_fd)
 {
 	char	*line;
 	char	*prompt;
 
-	if (!delimiter || write_fd < 0)
-		return (1);
 	prompt = "> ";
 	while (1)
 	{
 		line = readline(prompt);
 		if (!line)
 		{
-			ft_putendl_fd("", STDOUT_FILENO);
+			print_heredoc_warning(delimiter);
 			break ;
 		}
 		if (ft_strncmp(line, delimiter, ft_strlen(delimiter) + 1) == 0)
@@ -47,21 +45,63 @@ static int	heredoc_input_loop(char *delimiter, int write_fd)
 		free(line);
 	}
 	close(write_fd);
-	return (0);
+}
+
+static int	wait_heredoc_child(pid_t pid)
+{
+	int	status;
+
+	if (waitpid(pid, &status, 0) < 0)
+		return (-1);
+	if (WIFSIGNALED(status))
+		return (128 + WTERMSIG(status));
+	if (WIFEXITED(status))
+		return (WEXITSTATUS(status));
+	return (-1);
 }
 
 int	handle_heredoc(char *delimiter)
 {
-	int	pipe_fd[2];
+	int		pipe_fd[2];
+	pid_t	pid;
+	int		wait_status;
 
 	if (!delimiter)
 		return (-1);
-	if (heredoc_setup(pipe_fd) < 0)
-		return (-1);
-	if (heredoc_input_loop(delimiter, pipe_fd[1]) != 0)
+	if (pipe(pipe_fd) < 0)
 	{
+		print_error("pipe", NULL, strerror(errno));
+		return (-1);
+	}
+	set_parent_execution_signals();
+	pid = fork();
+	if (pid < 0)
+	{
+		print_error("fork", NULL, strerror(errno));
 		close(pipe_fd[0]);
 		close(pipe_fd[1]);
+		set_parent_interactive_signals();
+		return (-1);
+	}
+	if (pid == 0)
+	{
+		child_signal_setting();
+		close(pipe_fd[0]);
+		run_heredoc_child(delimiter, pipe_fd[1]);
+		_exit(0);
+	}
+	close(pipe_fd[1]);
+	wait_status = wait_heredoc_child(pid);
+	set_parent_interactive_signals();
+	if (wait_status == 130)
+	{
+		g_signal = 130;
+		close(pipe_fd[0]);
+		return (-1);
+	}
+	if (wait_status != 0)
+	{
+		close(pipe_fd[0]);
 		return (-1);
 	}
 	return (pipe_fd[0]);

@@ -17,6 +17,9 @@ static void	enable_utf8_mode(void)
 #ifdef IUTF8
 	term.c_iflag |= IUTF8;
 #endif
+#ifdef ECHOCTL
+	term.c_lflag &= ~ECHOCTL;
+#endif
 	tcsetattr(STDIN_FILENO, TCSANOW, &term);
 }
 
