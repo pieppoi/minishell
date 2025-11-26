@@ -81,6 +81,12 @@ void	expand_and_remove_quotes(t_token *tok, t_env *env)
 		p = tok->word;
 		p_ptr = &p;
 		process_single_token(&new_word, p_ptr, env, g_signal_val);
+		if (!new_word)
+		{
+			new_word = ft_strdup("");
+			if (!new_word)
+				fatal_error("ft_strdup");
+		}
 		free(tok->word);
 		tok->word = new_word;
 		tok = tok->next;

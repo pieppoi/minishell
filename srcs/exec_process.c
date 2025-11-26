@@ -16,6 +16,7 @@ static void	execute_child_process(char *exec_path, char **argv, t_env **env)
 {
 	char	**envp;
 
+	child_signal_setting();
 	envp = env_to_array(*env);
 	if (!envp)
 		_exit(1);
@@ -24,17 +25,34 @@ static void	execute_child_process(char *exec_path, char **argv, t_env **env)
 	_exit(126);
 }
 
+static void	print_signal_message(int sig)
+{
+	if (sig == SIGINT)
+		ft_putchar_fd('\n', STDOUT_FILENO);
+	else if (sig == SIGQUIT)
+		ft_putendl_fd("Quit: 3", STDERR_FILENO);
+}
+
+int	interpret_wait_status(int status, int print_signal_msg)
+{
+	if (WIFEXITED(status))
+		return (WEXITSTATUS(status));
+	if (WIFSIGNALED(status))
+	{
+		if (print_signal_msg)
+			print_signal_message(WTERMSIG(status));
+		return (128 + WTERMSIG(status));
+	}
+	return (1);
+}
+
 static int	wait_for_child(pid_t pid)
 {
 	int	status;
 
 	if (waitpid(pid, &status, 0) < 0)
 		return (1);
-	if (WIFEXITED(status))
-		return (WEXITSTATUS(status));
-	if (WIFSIGNALED(status))
-		return (128 + WTERMSIG(status));
-	return (1);
+	return (interpret_wait_status(status, 1));
 }
 
 int	execute_external(char **argv, t_env **env)

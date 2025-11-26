@@ -54,6 +54,12 @@ void	quote_removal(t_token *tok)
 			new_word = ft_strdup("");
 		}
 		free(tok->word);
+		if (!new_word)
+		{
+			new_word = ft_strdup("");
+			if (!new_word)
+				fatal_error("ft_strdup");
+		}
 		tok->word = new_word;
 		tok = tok->next;
 	}
