@@ -36,7 +36,7 @@ static int	skip_quoted(char **line_ptr, char quote_char)
 	return (0);
 }
 
-static int	handle_quoted_segment(char **line_ptr, char quote_char,
+static int	handle_word_quoted_segment(char **line_ptr, char quote_char,
 		bool *error_ptr)
 {
 	if (skip_quoted(line_ptr, quote_char) != 0)
@@ -55,7 +55,7 @@ static char	*scan_word_end(char *line, bool *error_ptr)
 	{
 		if (*line == SINGLE_QUOTE_CHAR || *line == DOUBLE_QUOTE_CHAR)
 		{
-			if (handle_quoted_segment(&line, *line, error_ptr) != 0)
+			if (handle_word_quoted_segment(&line, *line, error_ptr) != 0)
 				return (NULL);
 			continue ;
 		}
