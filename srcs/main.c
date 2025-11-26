@@ -12,7 +12,18 @@
 
 #include "minishell.h"
 
-// メイン関数
+static int	init_shell_environment(t_env **env, char **envp)
+{
+	*env = init_env(envp);
+	if (!*env)
+	{
+		ft_putendl_fd("minishell: failed to initialize environment",
+			STDERR_FILENO);
+		return (0);
+	}
+	return (1);
+}
+
 int	main(int argc, char **argv, char **envp)
 {
 	t_env	*env;
@@ -22,114 +33,12 @@ int	main(int argc, char **argv, char **envp)
 	env = NULL;
 	configure_input_behavior();
 	setup_signal_handlers();
-	env = init_env(envp);
-	if (!env)
+	if (!init_shell_environment(&env, envp))
 	{
-		ft_putendl_fd("minishell: failed to initialize environment",
-			STDERR_FILENO);
 		release_shell_resources(&env);
 		return (1);
 	}
 	minishell_loop(&env);
 	release_shell_resources(&env);
 	return (g_signal);
-}
-
-// TTYでない場合の1行入力
-static char	*read_noninteractive_line(void)
-{
-	char	*line;
-	char	ch;
-	ssize_t	bytes;
-
-	line = NULL;
-	while (1)
-	{
-		bytes = read(STDIN_FILENO, &ch, 1);
-		if (bytes == -1)
-		{
-			if (errno == EINTR)
-				continue ;
-			print_system_error("read", NULL);
-			free(line);
-			return (NULL);
-		}
-		if (bytes == 0)
-			break ;
-		if (ch == '\n')
-		{
-			if (!line)
-				return (ft_strdup(""));
-			return (line);
-		}
-		append_char(&line, ch);
-	}
-	return (line);
-}
-
-// readlineで入力を取得
-static char	*get_input_line(char *prompt)
-{
-	static int	prompt_printed;
-
-	if (isatty(STDIN_FILENO))
-		return (readline(prompt));
-	if (!prompt_printed && prompt)
-	{
-		ft_putstr_fd(prompt, STDOUT_FILENO);
-		ft_putchar_fd('\n', STDOUT_FILENO);
-		prompt_printed = 1;
-	}
-	return (read_noninteractive_line());
-}
-
-// メインループ
-int	minishell_loop(t_env **env)
-{
-	char	*input;
-	int		exec_status;
-
-	while (true)
-	{
-		input = get_input_line("minishell$ ");
-		if (!input)
-			break ;
-		if (ft_strlen(input) > 0)
-			add_history(input);
-		exec_status = parse_and_execute(input, env);
-		if (exec_status == SHELL_EXIT_REQUEST)
-		{
-			free(input);
-			shutdown_shell(env, g_signal);
-		}
-		free(input);
-	}
-	if (!input && isatty(STDIN_FILENO))
-		ft_putstr_fd("\nexit\n", STDERR_FILENO);
-	return (0);
-}
-
-int	parse_and_execute(char *input, t_env **env)
-{
-	char	**tokens;
-	char	**args;
-	t_fds	fds;
-	int		ret;
-	int		exec_status;
-
-	if (!input || ft_strlen(input) == 0)
-		return (0);
-	ret = handle_tokenization_and_args(input, env, &tokens, &args);
-	if (ret == -1)
-		return (0);
-	if (ret == 1)
-	{
-		g_signal = execute_pipe(tokens, env);
-		free_array(tokens);
-		return (0);
-	}
-	exec_status = execute_single_command(tokens, args, env, &fds);
-	if (exec_status == SHELL_EXIT_REQUEST)
-		return (SHELL_EXIT_REQUEST);
-	return (0);
 }

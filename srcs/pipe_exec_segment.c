@@ -16,6 +16,14 @@ pid_t	handle_fatal_redirection_failure(t_fd_info *fdi_ptr, int has_next);
 pid_t	handle_nonfatal_redirection_failure(t_fd_info *fdi_ptr, int has_next,
 			t_token_range range, int *start_idx_ptr);
 
+struct s_pipe_segment_ctx
+{
+	char			**args;
+	t_token_range	range;
+	int				has_next;
+	t_pipe_redir_status	status;
+};
+
 static int	setup_pipe_if_needed(t_fd_info *fdi_ptr, int has_next)
 {
 	if (!has_next)
@@ -60,23 +68,20 @@ static pid_t	handle_missing_args(t_fd_info *fdi_ptr, int has_next)
 pid_t	pipe_loop_segment(char **tokens,
 		t_env **env, t_fd_info *fdi_ptr, int *start_idx_ptr)
 {
-	char	**args;
-	t_token_range	range;
-	int	has_next;
-	t_pipe_redir_status	status;
+	struct s_pipe_segment_ctx	ctx;
 
-	find_pipe_segment(tokens, start_idx_ptr, &range, &has_next);
-	if (setup_pipe_if_needed(fdi_ptr, has_next) != 0)
+	find_pipe_segment(tokens, start_idx_ptr, &ctx.range, &ctx.has_next);
+	if (setup_pipe_if_needed(fdi_ptr, ctx.has_next) != 0)
 		return (-1);
-	status = setup_pipe_redirections(tokens, range,
+	ctx.status = setup_pipe_redirections(tokens, ctx.range,
 			&fdi_ptr->in_fd, &fdi_ptr->out_fd);
-	if (status == PIPE_REDIR_ERR_FATAL)
-		return (handle_fatal_redirection_failure(fdi_ptr, has_next));
-	if (status == PIPE_REDIR_ERR_NON_FATAL)
+	if (ctx.status == PIPE_REDIR_ERR_FATAL)
+		return (handle_fatal_redirection_failure(fdi_ptr, ctx.has_next));
+	if (ctx.status == PIPE_REDIR_ERR_NON_FATAL)
 		return (handle_nonfatal_redirection_failure(
-				fdi_ptr, has_next, range, start_idx_ptr));
-	args = get_pipe_command(tokens, start_idx_ptr);
-	if (!args || !args[0])
-		return (handle_missing_args(fdi_ptr, has_next));
-	return (execute_segment_process(args, env, fdi_ptr, has_next));
+				fdi_ptr, ctx.has_next, ctx.range, start_idx_ptr));
+	ctx.args = get_pipe_command(tokens, start_idx_ptr);
+	if (!ctx.args || !ctx.args[0])
+		return (handle_missing_args(fdi_ptr, ctx.has_next));
+	return (execute_segment_process(ctx.args, env, fdi_ptr, ctx.has_next));
 }

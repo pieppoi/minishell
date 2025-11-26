@@ -54,6 +54,7 @@ SRCS = $(SRCDIR)/main.c \
 	$(SRCDIR)/pipe_exec_segment.c \
 	$(SRCDIR)/pipe_exec_fd.c \
 	$(SRCDIR)/pipe_exec_utils.c \
+	$(SRCDIR)/shell_loop.c \
 	$(SRCDIR)/execute.c \
 	$(SRCDIR)/execute_fd_utils.c \
 	$(SRCDIR)/tokenizer_utils.c \
