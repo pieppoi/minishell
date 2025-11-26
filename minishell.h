@@ -62,6 +62,13 @@ typedef struct s_token_range
 	int	end_idx;
 }	t_token_range;
 
+typedef enum e_pipe_redir_status
+{
+	PIPE_REDIR_OK = 0,
+	PIPE_REDIR_ERR_NON_FATAL = -1,
+	PIPE_REDIR_ERR_FATAL = -2
+}	t_pipe_redir_status;
+
 // t_fd_info 構造体 (内部に status を追加)
 typedef struct s_fd_info
 {
@@ -234,7 +241,7 @@ int		handle_input_redirections(char **tokens,
 			t_token_range range, int *in_fd, int *current_idx_ptr);
 int		handle_output_redirections(char **tokens,
 			t_token_range range, int *out_fd, int *current_idx_ptr);
-int		setup_pipe_redirections(char **tokens,
+t_pipe_redir_status	setup_pipe_redirections(char **tokens,
 			t_token_range range, int *in_fd, int *out_fd);
 void	find_pipe_segment(char **tokens,
 			int *start_idx_ptr, t_token_range *range_ptr, int *has_next_ptr);
