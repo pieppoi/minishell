@@ -70,8 +70,16 @@ static char	*read_noninteractive_line(void)
 // readlineで入力を取得
 static char	*get_input_line(char *prompt)
 {
+	static int	prompt_printed;
+
 	if (isatty(STDIN_FILENO))
 		return (readline(prompt));
+	if (!prompt_printed && prompt)
+	{
+		ft_putstr_fd(prompt, STDOUT_FILENO);
+		ft_putchar_fd('\n', STDOUT_FILENO);
+		prompt_printed = 1;
+	}
 	return (read_noninteractive_line());
 }
 

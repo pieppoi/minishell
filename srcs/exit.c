@@ -48,7 +48,7 @@ int	ft_exit(char **args, t_env **env)
 	if (!parse_exit_value(args[1], &exit_value))
 	{
 		print_error("exit", args[1], "numeric argument required");
-		g_signal = 255;
+		g_signal = 2;
 		return (SHELL_EXIT_REQUEST);
 	}
 	g_signal = (unsigned char)exit_value;
