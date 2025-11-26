@@ -52,8 +52,8 @@ void	set_execution_terminal_mode(void)
 void	configure_input_behavior(void)
 {
 	setlocale(LC_CTYPE, "");
-	rl_catch_signals = 0;
-	rl_catch_sigwinch = 0;
+	RL_CATCH_SIGNALS = 0;
+	RL_CATCH_SIGWINCH = 0;
 	rl_variable_bind("convert-meta", "off");
 	rl_variable_bind("input-meta", "on");
 	rl_variable_bind("output-meta", "on");

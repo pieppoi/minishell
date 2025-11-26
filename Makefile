@@ -13,11 +13,16 @@
 NAME = minishell
 
 CC = cc
-CFLAGS = -Wall -Wextra -Werror -g -I/usr/include/readline -I. -Isrcs -Ilibft
-LDFLAGS = -lreadline -ltermcap
+CFLAGS = -Wall -Wextra -Werror -g -I. -Isrcs -Ivendor/libft
+LDFLAGS =
+
+ifeq ($(USE_SYSTEM_READLINE),1)
+	CFLAGS += -DMINISHELL_USE_SYSTEM_READLINE -I/usr/include/readline
+	LDFLAGS += -lreadline -ltermcap
+endif
 
 SRCDIR = srcs
-LIBFTDIR = ./libft
+LIBFTDIR = ./vendor/libft
 
 # ソースファイル
 SRCS = $(SRCDIR)/main.c \
@@ -55,6 +60,9 @@ SRCS = $(SRCDIR)/main.c \
 	$(SRCDIR)/pipe_exec_fd.c \
 	$(SRCDIR)/pipe_exec_utils.c \
 	$(SRCDIR)/shell_loop.c \
+	$(SRCDIR)/readline_stub.c \
+	$(SRCDIR)/readline_stub_history.c \
+	$(SRCDIR)/readline_stub_display.c \
 	$(SRCDIR)/execute.c \
 	$(SRCDIR)/execute_fd_utils.c \
 	$(SRCDIR)/tokenizer_utils.c \

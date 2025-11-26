@@ -17,8 +17,7 @@
 # include <stdlib.h>
 # include <unistd.h>
 # include <string.h>
-# include <readline/readline.h>
-# include <readline/history.h>
+# include "readline_wrapper.h"
 # include <sys/wait.h>
 # include <signal.h>
 # include <errno.h>
@@ -72,6 +71,14 @@ typedef struct s_fd_info
 	int	status;
 }	t_fd_info;
 
+typedef struct s_pipe_segment_ctx
+{
+	char				**args;
+	t_token_range		range;
+	int					has_next;
+	t_pipe_redir_status	status;
+}	t_pipe_segment_ctx;
+
 typedef struct s_fds
 {
 	int	in_fd;
@@ -100,6 +107,13 @@ typedef struct s_env_pair
 	char	*key;
 	char	*value;
 }	t_env_pair;
+
+typedef struct s_pipe_exec_state
+{
+	pid_t	last_pid;
+	int		start_idx;
+	int		exit_code;
+}	t_pipe_exec_state;
 
 int					minishell_loop(t_env **env);
 int					parse_and_execute(char *input, t_env **env);
