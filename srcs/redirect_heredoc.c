@@ -73,6 +73,7 @@ int	handle_heredoc(char *delimiter)
 		print_error("pipe", NULL, strerror(errno));
 		return (-1);
 	}
+	set_execution_terminal_mode();
 	set_parent_execution_signals();
 	pid = fork();
 	if (pid < 0)
@@ -81,6 +82,7 @@ int	handle_heredoc(char *delimiter)
 		close(pipe_fd[0]);
 		close(pipe_fd[1]);
 		set_parent_interactive_signals();
+		set_interactive_terminal_mode();
 		return (-1);
 	}
 	if (pid == 0)
@@ -93,6 +95,7 @@ int	handle_heredoc(char *delimiter)
 	close(pipe_fd[1]);
 	wait_status = wait_heredoc_child(pid);
 	set_parent_interactive_signals();
+	set_interactive_terminal_mode();
 	if (wait_status == 130)
 	{
 		g_signal = 130;

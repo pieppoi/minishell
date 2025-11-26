@@ -172,6 +172,8 @@ void	configure_input_behavior(void);
 void	restore_terminal_behavior(void);
 void	release_shell_resources(t_env **env);
 void	shutdown_shell(t_env **env, int exit_code);
+void	set_interactive_terminal_mode(void);
+void	set_execution_terminal_mode(void);
 
 // プロセス終了ステータス処理
 int		interpret_wait_status(int status, int print_signal_msg);

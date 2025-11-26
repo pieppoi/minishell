@@ -2,25 +2,50 @@
 #include <locale.h>
 
 static struct termios	g_original_termios;
+static struct termios	g_interactive_termios;
+static struct termios	g_execution_termios;
 static bool				g_termios_saved;
 
-static void	enable_utf8_mode(void)
+static void	apply_termios(const struct termios *term)
 {
-	struct termios	term;
+	if (!term || !g_termios_saved)
+		return ;
+	if (!isatty(STDIN_FILENO))
+		return ;
+	tcsetattr(STDIN_FILENO, TCSANOW, term);
+}
+
+static void	initialize_termios_modes(void)
+{
+	struct termios	current;
 
 	if (!isatty(STDIN_FILENO))
 		return ;
-	if (tcgetattr(STDIN_FILENO, &term) == -1)
+	if (tcgetattr(STDIN_FILENO, &current) == -1)
 		return ;
-	g_original_termios = term;
+	g_original_termios = current;
+	g_interactive_termios = current;
+	g_execution_termios = current;
 	g_termios_saved = true;
 #ifdef IUTF8
-	term.c_iflag |= IUTF8;
+	g_interactive_termios.c_iflag |= IUTF8;
+	g_execution_termios.c_iflag |= IUTF8;
 #endif
 #ifdef ECHOCTL
-	term.c_lflag &= ~ECHOCTL;
+	g_interactive_termios.c_lflag &= ~ECHOCTL;
+	g_execution_termios.c_lflag |= ECHOCTL;
 #endif
-	tcsetattr(STDIN_FILENO, TCSANOW, &term);
+	apply_termios(&g_interactive_termios);
+}
+
+void	set_interactive_terminal_mode(void)
+{
+	apply_termios(&g_interactive_termios);
+}
+
+void	set_execution_terminal_mode(void)
+{
+	apply_termios(&g_execution_termios);
 }
 
 void	configure_input_behavior(void)
@@ -31,12 +56,12 @@ void	configure_input_behavior(void)
 	rl_variable_bind("convert-meta", "off");
 	rl_variable_bind("input-meta", "on");
 	rl_variable_bind("output-meta", "on");
-	enable_utf8_mode();
+	initialize_termios_modes();
 }
 
 void	restore_terminal_behavior(void)
 {
-	if (g_termios_saved)
+	if (g_termios_saved && isatty(STDIN_FILENO))
 		tcsetattr(STDIN_FILENO, TCSANOW, &g_original_termios);
 }
 
