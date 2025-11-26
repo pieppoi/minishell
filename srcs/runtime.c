@@ -14,6 +14,9 @@ static void	enable_utf8_mode(void)
 		return ;
 	g_original_termios = term;
 	g_termios_saved = true;
+#ifdef ECHOCTL
+	term.c_lflag |= ECHOCTL;
+#endif
 #ifdef IUTF8
 	term.c_iflag |= IUTF8;
 #endif
