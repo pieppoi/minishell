@@ -159,6 +159,7 @@ int		open_input_file(char *filename);
 int		open_output_file(char *filename, int append);
 int		handle_heredoc(char *delimiter);
 void	restore_fds(int saved_stdin, int saved_stdout);
+void	dup_and_close_fd(int *fd_ptr, int target);
 
 // シグナル処理
 void	setup_signal_handlers(void);

@@ -60,6 +60,32 @@ static int	wait_heredoc_child(pid_t pid)
 	return (-1);
 }
 
+static int	start_heredoc_process(char *delimiter,
+		int pipe_fd[2], pid_t *pid_ptr)
+{
+	set_execution_terminal_mode();
+	set_parent_execution_signals();
+	*pid_ptr = fork();
+	if (*pid_ptr < 0)
+	{
+		print_error("fork", NULL, strerror(errno));
+		close(pipe_fd[0]);
+		close(pipe_fd[1]);
+		set_parent_interactive_signals();
+		set_interactive_terminal_mode();
+		return (-1);
+	}
+	if (*pid_ptr == 0)
+	{
+		child_signal_setting();
+		close(pipe_fd[0]);
+		run_heredoc_child(delimiter, pipe_fd[1]);
+		_exit(0);
+	}
+	close(pipe_fd[1]);
+	return (0);
+}
+
 int	handle_heredoc(char *delimiter)
 {
 	int		pipe_fd[2];
@@ -73,37 +99,15 @@ int	handle_heredoc(char *delimiter)
 		print_error("pipe", NULL, strerror(errno));
 		return (-1);
 	}
-	set_execution_terminal_mode();
-	set_parent_execution_signals();
-	pid = fork();
-	if (pid < 0)
-	{
-		print_error("fork", NULL, strerror(errno));
-		close(pipe_fd[0]);
-		close(pipe_fd[1]);
-		set_parent_interactive_signals();
-		set_interactive_terminal_mode();
+	if (start_heredoc_process(delimiter, pipe_fd, &pid) < 0)
 		return (-1);
-	}
-	if (pid == 0)
-	{
-		child_signal_setting();
-		close(pipe_fd[0]);
-		run_heredoc_child(delimiter, pipe_fd[1]);
-		_exit(0);
-	}
-	close(pipe_fd[1]);
 	wait_status = wait_heredoc_child(pid);
 	set_parent_interactive_signals();
 	set_interactive_terminal_mode();
-	if (wait_status == 130)
+	if (wait_status == 130 || wait_status != 0)
 	{
-		g_signal = 130;
-		close(pipe_fd[0]);
-		return (-1);
-	}
-	if (wait_status != 0)
-	{
+		if (wait_status == 130)
+			g_signal = 130;
 		close(pipe_fd[0]);
 		return (-1);
 	}

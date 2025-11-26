@@ -65,16 +65,8 @@ int	handle_redirection_and_execution(char **tokens,
 		return (-1);
 	fd_ptr->saved_stdin = dup(STDIN_FILENO);
 	fd_ptr->saved_stdout = dup(STDOUT_FILENO);
-	if (fd_ptr->in_fd >= 0)
-	{
-		dup2(fd_ptr->in_fd, STDIN_FILENO);
-		close(fd_ptr->in_fd);
-	}
-	if (fd_ptr->out_fd >= 0)
-	{
-		dup2(fd_ptr->out_fd, STDOUT_FILENO);
-		close(fd_ptr->out_fd);
-	}
+	dup_and_close_fd(&fd_ptr->in_fd, STDIN_FILENO);
+	dup_and_close_fd(&fd_ptr->out_fd, STDOUT_FILENO);
 	if (is_builtin(args[0]))
 		exit_status = execute_builtin(args, env);
 	else

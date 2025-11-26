@@ -32,6 +32,8 @@ SRCS = $(SRCDIR)/main.c \
 	$(SRCDIR)/unset.c \
 	$(SRCDIR)/signals.c \
 	$(SRCDIR)/runtime.c \
+	$(SRCDIR)/runtime_cleanup.c \
+	$(SRCDIR)/runtime_flags.c \
 	$(SRCDIR)/tokenizer.c \
 	$(SRCDIR)/env_init.c \
 	$(SRCDIR)/env_ops.c \
@@ -49,8 +51,11 @@ SRCS = $(SRCDIR)/main.c \
 	$(SRCDIR)/parse_pipe.c \
 	$(SRCDIR)/pipe_redirections.c \
 	$(SRCDIR)/pipe_exec.c \
+	$(SRCDIR)/pipe_exec_segment.c \
+	$(SRCDIR)/pipe_exec_fd.c \
 	$(SRCDIR)/pipe_exec_utils.c \
 	$(SRCDIR)/execute.c \
+	$(SRCDIR)/execute_fd_utils.c \
 	$(SRCDIR)/tokenizer_utils.c \
 	$(SRCDIR)/tokenizer_word.c \
 	$(SRCDIR)/tokenizer_expand.c \

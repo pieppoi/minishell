@@ -87,32 +87,25 @@ static char	*get_input_line(char *prompt)
 int	minishell_loop(t_env **env)
 {
 	char	*input;
-	char	*prompt;
 	int		exec_status;
 
-	prompt = "minishell$ ";
 	while (true)
 	{
-		input = get_input_line(prompt);
+		input = get_input_line("minishell$ ");
 		if (!input)
-		{
-			if (isatty(STDIN_FILENO))
-				ft_putstr_fd("\nexit\n", STDERR_FILENO);
 			break ;
-		}
 		if (ft_strlen(input) > 0)
 			add_history(input);
 		exec_status = parse_and_execute(input, env);
 		if (exec_status == SHELL_EXIT_REQUEST)
 		{
-			int	exit_code;
-
-			exit_code = g_signal;
 			free(input);
-			shutdown_shell(env, exit_code);
+			shutdown_shell(env, g_signal);
 		}
 		free(input);
 	}
+	if (!input && isatty(STDIN_FILENO))
+		ft_putstr_fd("\nexit\n", STDERR_FILENO);
 	return (0);
 }
 
@@ -124,8 +117,6 @@ int	parse_and_execute(char *input, t_env **env)
 	int		ret;
 	int		exec_status;
 
-	tokens = NULL;
-	args = NULL;
 	if (!input || ft_strlen(input) == 0)
 		return (0);
 	ret = handle_tokenization_and_args(input, env, &tokens, &args);
