@@ -6,7 +6,7 @@
 /*   By: mkazuhik <mkazuhik@student.42tokyo.jp>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/11/22 04:58:34 by mkazuhik          #+#    #+#             */
-/*   Updated: 2025/11/25 01:58:44 by mkazuhik         ###   ########.fr       */
+/*   Updated: 2025/11/27 07:37:37 by mkazuhik         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -28,7 +28,6 @@ static t_builtin	*get_builtins(void)
 	return (builtins);
 }
 
-// ビルトインコマンドかどうかをチェック
 int	is_builtin(char *cmd)
 {
 	t_builtin	*builtins;
@@ -48,7 +47,6 @@ int	is_builtin(char *cmd)
 	return (0);
 }
 
-// ビルトインコマンドを実行（ディスパッチ）
 int	execute_builtin(char **args, t_env **env)
 {
 	t_builtin	*builtins;

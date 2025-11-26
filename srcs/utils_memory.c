@@ -2,17 +2,16 @@
 /*                                                                            */
 /*                                                        :::      ::::::::   */
 /*   utils_memory.c                                     :+:      :+:    :+:   */
-/*                                                    ft +:+         +:+      */
+/*                                                    +:+ +:+         +:+     */
 /*   By: mkazuhik <mkazuhik@student.42tokyo.jp>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/11/22 05:25:00 by mkazuhik          #+#    #+#             */
-/*   Updated: 2025/11/22 05:25:00 by mkazuhik         ###   ########.fr       */
+/*   Updated: 2025/11/27 07:41:17 by mkazuhik         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
 
-// 安全なメモリ確保関数（エラー時にNULLを返す）
 static void	*safe_malloc(size_t size)
 {
 	void	*ptr;

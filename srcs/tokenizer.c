@@ -6,15 +6,11 @@
 /*   By: mkazuhik <mkazuhik@student.42tokyo.jp>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/11/22 03:59:24 by mkazuhik          #+#    #+#             */
-/*   Updated: 2025/11/25 03:34:12 by mkazuhik         ###   ########.fr       */
+/*   Updated: 2025/11/27 07:41:07 by mkazuhik         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
-
-/*-----------------------------------------------------------
-** Utility functions
------------------------------------------------------------*/
 
 void	fatal_error(const char *msg)
 {
@@ -29,10 +25,6 @@ void	assert_error(const char *msg)
 	ft_putendl_fd((char *)msg, STDERR_FILENO);
 	exit(255);
 }
-
-/*-----------------------------------------------------------
-** Token constructor
------------------------------------------------------------*/
 
 t_token	*new_token(char *word, t_token_kind kind)
 {
@@ -59,23 +51,3 @@ bool	consume_blank(char **rest, char *line)
 	*rest = line;
 	return (*line != '\0');
 }
-
-// /*-----------------------------------------------------------
-// ** main for testing
-// -----------------------------------------------------------*/
-
-// int	main(void)
-// {
-// 	char line[256];
-
-// 	while (1)
-// 	{
-// 		printf("minishell$ ");
-// 		if (!fgets(line, sizeof(line), stdin))
-// 			break;
-// 		t_token *tok = tokenize(line);
-// 		print_tokens(tok);
-// 		free_token(tok);
-// 	}
-// 	return (0);
-// }

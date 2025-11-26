@@ -6,13 +6,12 @@
 /*   By: mkazuhik <mkazuhik@student.42tokyo.jp>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/11/22 04:54:16 by mkazuhik          #+#    #+#             */
-/*   Updated: 2025/11/22 04:54:17 by mkazuhik         ###   ########.fr       */
+/*   Updated: 2025/11/27 07:39:50 by mkazuhik         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
 
-// pwd コマンドの実装
 int	ft_pwd(char **args, t_env **env)
 {
 	char	*cwd;

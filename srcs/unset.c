@@ -6,13 +6,12 @@
 /*   By: mkazuhik <mkazuhik@student.42tokyo.jp>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/11/22 04:54:02 by mkazuhik          #+#    #+#             */
-/*   Updated: 2025/11/22 04:54:03 by mkazuhik         ###   ########.fr       */
+/*   Updated: 2025/11/27 07:41:11 by mkazuhik         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
 
-// unset コマンドの実装
 int	ft_unset(char **args, t_env **env)
 {
 	int	i;

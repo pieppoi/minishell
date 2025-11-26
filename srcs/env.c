@@ -6,13 +6,12 @@
 /*   By: mkazuhik <mkazuhik@student.42tokyo.jp>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/11/22 04:59:07 by mkazuhik          #+#    #+#             */
-/*   Updated: 2025/11/22 05:01:12 by mkazuhik         ###   ########.fr       */
+/*   Updated: 2025/11/27 07:37:52 by mkazuhik         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
 
-// env コマンドの実装
 int	ft_env(char **args, t_env **env)
 {
 	t_env	*current;

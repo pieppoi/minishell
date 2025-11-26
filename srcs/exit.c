@@ -6,7 +6,7 @@
 /*   By: mkazuhik <mkazuhik@student.42tokyo.jp>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/11/22 04:54:44 by mkazuhik          #+#    #+#             */
-/*   Updated: 2025/11/23 21:11:47 by mkazuhik         ###   ########.fr       */
+/*   Updated: 2025/11/27 07:38:08 by mkazuhik         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -27,7 +27,6 @@ static int	parse_exit_value(char *arg, long long *result)
 	return (1);
 }
 
-// exit コマンドの実装
 int	ft_exit(char **args, t_env **env)
 {
 	long long	exit_value;

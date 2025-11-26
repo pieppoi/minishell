@@ -6,7 +6,7 @@
 /*   By: mkazuhik <mkazuhik@student.42tokyo.jp>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/11/27 08:30:00 by mkazuhik          #+#    #+#             */
-/*   Updated: 2025/11/27 08:30:00 by mkazuhik         ###   ########.fr       */
+/*   Updated: 2025/11/27 07:19:27 by mkazuhik         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,9 +18,9 @@ pid_t	handle_nonfatal_redirection_failure(t_fd_info *fdi_ptr, int has_next,
 
 struct s_pipe_segment_ctx
 {
-	char			**args;
-	t_token_range	range;
-	int				has_next;
+	char				**args;
+	t_token_range		range;
+	int					has_next;
 	t_pipe_redir_status	status;
 };
 
