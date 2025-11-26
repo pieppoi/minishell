@@ -35,6 +35,8 @@
 // グローバル変数（シグナル用）
 extern int	g_signal;
 
+# define SHELL_EXIT_REQUEST 257
+
 /*-----------------------------------------------------------
 ** Token structure
 -----------------------------------------------------------*/
@@ -156,6 +158,12 @@ void	setup_signal_handlers(void);
 void	sigint_handler(int sig);
 void	child_signal_setting(void);
 
+// ランタイム制御
+void	configure_input_behavior(void);
+void	restore_terminal_behavior(void);
+void	release_shell_resources(t_env **env);
+void	shutdown_shell(t_env **env, int exit_code);
+
 /*-----------------------------------------------------------
 ** Tokenizer function prototypes
 -----------------------------------------------------------*/
@@ -169,7 +177,7 @@ bool	is_metacharacter(char c);
 bool	is_operator(const char *s);
 t_token	*operator(char **rest, char *line);
 bool	is_word(const char *s);
-t_token	*word(char **rest, char *line);
+t_token	*word(char **rest, char *line, bool *error_ptr);
 void	append_char(char **s, char c);
 void	quote_removal(t_token *tok);
 void	expand_and_remove_quotes(t_token *tok, t_env *env);

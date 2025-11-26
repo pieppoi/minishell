@@ -15,44 +15,72 @@
 #define SINGLE_QUOTE_CHAR '\''
 #define DOUBLE_QUOTE_CHAR '\"'
 
-static char	*scan_word_end(char *line)
+static void	report_unclosed_quote(bool is_single)
+{
+	if (is_single)
+		print_error("minishell", NULL, "unclosed single quote");
+	else
+		print_error("minishell", NULL, "unclosed double quote");
+}
+
+static int	skip_quoted(char **line_ptr, char quote_char)
+{
+	char	*cursor;
+
+	cursor = *line_ptr + 1;
+	while (*cursor && *cursor != quote_char)
+		cursor++;
+	if (*cursor == '\0')
+		return (-1);
+	*line_ptr = cursor + 1;
+	return (0);
+}
+
+static char	*scan_word_end(char *line, bool *error_ptr)
 {
 	while (*line && !is_metacharacter(*line))
 	{
 		if (*line == SINGLE_QUOTE_CHAR)
 		{
-			line++;
-			while (*line && *line != SINGLE_QUOTE_CHAR)
-				line++;
-			if (*line == '\0')
-				fatal_error("Unclosed single quote");
-			line++;
+			if (skip_quoted(&line, SINGLE_QUOTE_CHAR) != 0)
+			{
+				if (error_ptr)
+					*error_ptr = true;
+				report_unclosed_quote(true);
+				return (NULL);
+			}
+			continue ;
 		}
-		else if (*line == DOUBLE_QUOTE_CHAR)
+		if (*line == DOUBLE_QUOTE_CHAR)
 		{
-			line++;
-			while (*line && *line != DOUBLE_QUOTE_CHAR)
-				line++;
-			if (*line == '\0')
-				fatal_error("Unclosed double quote");
-			line++;
+			if (skip_quoted(&line, DOUBLE_QUOTE_CHAR) != 0)
+			{
+				if (error_ptr)
+					*error_ptr = true;
+				report_unclosed_quote(false);
+				return (NULL);
+			}
+			continue ;
 		}
-		else
-			line++;
+		line++;
 	}
 	return (line);
 }
 
-t_token	*word(char **rest, char *line)
+t_token	*word(char **rest, char *line, bool *error_ptr)
 {
-	const char	*start = line;
+	const char	*start;
 	char		*end;
 	char		*word_str;
 
-	end = scan_word_end(line);
+	start = line;
+	end = scan_word_end(line, error_ptr);
+	if (!end)
+		return (NULL);
 	word_str = ft_substr(start, 0, end - start);
 	if (word_str == NULL)
 		fatal_error("ft_substr");
-	*rest = end;
+	if (rest)
+		*rest = end;
 	return (new_token(word_str, TK_WORD));
 }

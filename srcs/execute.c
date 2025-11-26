@@ -17,10 +17,13 @@ static int	process_tokenization(char *input, t_env *env, char ***tokens_ptr)
 	t_token	*tok;
 	char	**tokens;
 
+	errno = 0;
 	tok = tokenize(input);
 	if (!tok)
 	{
-		print_error(NULL, NULL, "syntax error");
+		if (errno != EINVAL)
+			print_error(NULL, NULL, "syntax error");
+		g_signal = 258;
 		return (-1);
 	}
 	expand_and_remove_quotes(tok, env);
@@ -99,6 +102,15 @@ void	execute_single_command(char **tokens,
 		free(args);
 		g_signal = 1;
 		return ;
+	}
+	if (exit_status == SHELL_EXIT_REQUEST)
+	{
+		int	exit_code;
+
+		exit_code = g_signal;
+		cleanup_and_exit_single(tokens, args,
+			fds_ptr->saved_stdin, fds_ptr->saved_stdout);
+		shutdown_shell(env, exit_code);
 	}
 	cleanup_and_exit_single(tokens, args,
 		fds_ptr->saved_stdin, fds_ptr->saved_stdout);

@@ -61,7 +61,14 @@ void	execute_child_process_pipe(char **args,
 	setup_input_redirection(fd_info);
 	setup_output_redirection(fd_info, has_next);
 	if (is_builtin(args[0]))
-		exit(execute_builtin(args, env));
+	{
+		int	status;
+
+		status = execute_builtin(args, env);
+		if (status == SHELL_EXIT_REQUEST)
+			exit(g_signal);
+		exit(status);
+	}
 	else
 		exit(execute_external(args, env));
 }
