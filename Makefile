@@ -16,10 +16,13 @@ CC = cc
 CFLAGS = -Wall -Wextra -Werror -g -I. -Isrcs -Ivendor/libft
 LDFLAGS =
 
-ifeq ($(USE_SYSTEM_READLINE),1)
-	CFLAGS += -DMINISHELL_USE_SYSTEM_READLINE -I/usr/include/readline
-	LDFLAGS += -lreadline -ltermcap
-endif
+READLINE_PREFIX ?=
+READLINE_INC_FLAGS ?= $(if $(READLINE_PREFIX),-I$(READLINE_PREFIX)/include,-I/usr/include/readline)
+READLINE_LIB_FLAGS ?= $(if $(READLINE_PREFIX),-L$(READLINE_PREFIX)/lib,)
+READLINE_LIBS ?= -lreadline -ltermcap
+
+CFLAGS += -DMINISHELL_USE_SYSTEM_READLINE $(READLINE_INC_FLAGS)
+LDFLAGS += $(READLINE_LIB_FLAGS) $(READLINE_LIBS)
 
 SRCDIR = srcs
 LIBFTDIR = ./vendor/libft
@@ -60,9 +63,6 @@ SRCS = $(SRCDIR)/main.c \
 	$(SRCDIR)/pipe_exec_fd.c \
 	$(SRCDIR)/pipe_exec_utils.c \
 	$(SRCDIR)/shell_loop.c \
-	$(SRCDIR)/readline_stub.c \
-	$(SRCDIR)/readline_stub_history.c \
-	$(SRCDIR)/readline_stub_display.c \
 	$(SRCDIR)/execute.c \
 	$(SRCDIR)/execute_fd_utils.c \
 	$(SRCDIR)/tokenizer_utils.c \
